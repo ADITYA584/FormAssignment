@@ -55,10 +55,24 @@ const DynamicForm = ({ fields }) => {
       >
         {({ isSubmitting, touched, errors, values, resetForm }) => (
           <Form
-            onSubmit={(event) => {
-              event.preventDefault(); // Prevent default form submission
-              console.log("Form submitted:", values);
-              resetForm(); // Reset form values
+            onSubmit={(e) => {
+              e.preventDefault();
+              let allFieldsFilled = true;
+              Object.keys(values).forEach((key) => {
+                if (
+                  fields.find((field) => field.name === key).required &&
+                  !values[key]
+                ) {
+                  allFieldsFilled = false;
+                }
+              });
+              if (allFieldsFilled) {
+                console.log(JSON.stringify(values, null, 2));
+                alert("Form submitted successfully!");
+                resetForm(); // Reset form values
+              } else {
+                alert("Please fill in all required fields.");
+              }
             }}
             className="max-w-md w-full space-y-4"
           >
@@ -209,7 +223,6 @@ const DynamicForm = ({ fields }) => {
 
             <button
               type="submit"
-              disabled={isSubmitting}
               className="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600"
             >
               Submit
